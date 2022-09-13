@@ -1,0 +1,26 @@
+{{define "registration"}}
+{{template "header"}}
+<div class="card">
+    <div class="card-header">
+        Add new entry
+    </div>
+    <div class="card-body">
+        <form method="post" action="/create">
+            <div class="form-group">
+              <label for="">Name</label>
+              <input type="text"
+                class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="">
+              <small id="helpId" class="form-text text-muted">Name</small>
+            </div>
+            <div class="form-group">
+                <label for="">Description</label>
+                <input type="text"
+                  class="form-control" name="description" id="description" aria-describedby="helpId" placeholder="">
+                <small id="helpId" class="form-text text-muted">Description</small>
+              </div>
+              <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+</div>
+{{template "footer"}}
+{{end}}

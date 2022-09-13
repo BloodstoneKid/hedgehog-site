@@ -1,0 +1,23 @@
+{{define "home"}}
+{{template "header"}}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{ range. }}
+                <tr>
+                    <td scope="row">{{.Id}}</td>
+                    <td>{{.Name}}</td>
+                    <td>{{.Description}}</td>
+                    <td><a name="" id="" class="btn btn-danger" href="/delete?id={{.Id}}" role="button">Delete</a></td>
+                </tr>
+            {{end}}
+            </tbody>
+         </table>
+{{template "footer"}}
+{{end}}
