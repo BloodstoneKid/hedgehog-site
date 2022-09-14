@@ -14,7 +14,7 @@ const (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = "andro747"
+	password = ""
 	dbname   = "hedgehogdb"
 )
 
