@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strconv"
 	"text/template"
 
 	_ "github.com/lib/pq"
@@ -32,22 +33,24 @@ func connBD() (conn *sql.DB) {
 
 func main() {
 
-	http.HandleFunc("/", home)
-	http.HandleFunc("/registration", registration)
-	http.HandleFunc("/create", create)
-	http.HandleFunc("/delete", delete)
+	http.HandleFunc("/", Home)
+	http.HandleFunc("/registration", Registration)
+	http.HandleFunc("/create", Create)
+	http.HandleFunc("/delete", Delete)
+	http.HandleFunc("/edit", Edit)
+	http.HandleFunc("/update", Update)
 
 	http.ListenAndServe(":8080", nil)
 
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
+type Hedgehog struct {
+	Id          int
+	Name        string
+	Description string
+}
 
-	type Hedgehog struct {
-		Id          int
-		Name        string
-		Description string
-	}
+func Home(w http.ResponseWriter, r *http.Request) {
 
 	establishedConn := connBD()
 	hedgeList, err := establishedConn.Query("SELECT * FROM hedgehogs")
@@ -68,14 +71,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 		hedgehog.Description = description
 		hedgeArray = append(hedgeArray, hedgehog)
 	}
-	templates.ExecuteTemplate(w, "home", nil)
+	templates.ExecuteTemplate(w, "home", hedgeArray)
 }
 
-func registration(w http.ResponseWriter, r *http.Request) {
+func Registration(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "registration", nil)
 }
 
-func create(w http.ResponseWriter, r *http.Request) {
+func Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		name := r.FormValue("name")
 		description := r.FormValue("description")
@@ -90,14 +93,63 @@ func create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func delete(w http.ResponseWriter, r *http.Request) {
-	hedgeId := r.URL.Query().Get("id")
-
+func Delete(w http.ResponseWriter, r *http.Request) {
+	hedgeId := r.URL.Query().Get("ID")
+	hedgeIdInt, err1 := strconv.Atoi(hedgeId)
+	if err1 != nil {
+		panic(err1.Error())
+	}
 	establishedConn := connBD()
-	_, err := establishedConn.Exec("DELETE FROM hedgehogs WHERE id= $1", hedgeId)
-	if err != nil {
-		panic(err.Error())
+	_, err2 := establishedConn.Exec("DELETE FROM hedgehogs WHERE id= $1", hedgeIdInt)
+	if err2 != nil {
+		panic(err2.Error())
 	}
 
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func Edit(w http.ResponseWriter, r *http.Request) {
+	hedgeId := r.URL.Query().Get("id")
+	hedgeIdInt, err1 := strconv.Atoi(hedgeId)
+	if err1 != nil {
+		panic(err1.Error())
+	}
+	establishedConn := connBD()
+	hedgeItem, err2 := establishedConn.Query("SELECT * FROM hedgehogs WHERE id=$1", hedgeIdInt)
+	if err2 != nil {
+		panic(err2.Error())
+	}
+	hedgehog := Hedgehog{}
+	for hedgeItem.Next() {
+		var id int
+		var name, description string
+		err2 = hedgeItem.Scan(&id, &name, &description)
+		if err2 != nil {
+			panic(err2.Error())
+		}
+		hedgehog.Id = id
+		hedgehog.Name = name
+		hedgehog.Description = description
+	}
+	templates.ExecuteTemplate(w, "edit", hedgehog)
+}
+
+func Update(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		id := r.FormValue("id")
+		idInt, err1 := strconv.Atoi(id)
+		if err1 != nil {
+			panic(err1.Error())
+		}
+		name := r.FormValue("name")
+		description := r.FormValue("description")
+		establishedConn := connBD()
+		_, err2 := establishedConn.Exec("UPDATE hedgehogs SET name=$1, description=$2 WHERE id=$3", name, description, idInt)
+		if err2 != nil {
+			fmt.Print("Error de insercion")
+			panic(err2.Error())
+		}
+
+		http.Redirect(w, r, "/", http.StatusMovedPermanently)
+	}
 }

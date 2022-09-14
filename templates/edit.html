@@ -1,24 +1,30 @@
-{{define "registration"}}
+{{define "edit"}}
 {{template "header"}}
 <div class="card">
     <div class="card-header">
-        Add new entry
+        Edit entry
     </div>
     <div class="card-body">
-        <form method="post" action="/create">
+        <form method="post" action="/update">
+
+            <div class="form-group">
+                <label class="sr-only" for="inputName">Key</label>
+                <input type="hidden" value="{{.Id}}" class="form-control" name="id" id="id" placeholder="">
+            </div>
+
             <div class="form-group">
               <label for="">Name</label>
               <input type="text"
-                class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="">
+                class="form-control" name="name" value="{{.Name}}" id="name" aria-describedby="helpId" placeholder="">
               <small id="helpId" class="form-text text-muted">Name</small>
             </div>
             <div class="form-group">
                 <label for="">Description</label>
                 <input type="text"
-                  class="form-control" name="description" id="description" aria-describedby="helpId" placeholder="">
+                  class="form-control" name="description" value="{{.Description}}" id="description" aria-describedby="helpId" placeholder="">
                 <small id="helpId" class="form-text text-muted">Description</small>
               </div>
-              <button type="submit" class="btn btn-success">Add</button>
+              <button type="submit" class="btn btn-success">Apply changes</button>
               <a name="" id="" class="btn btn-primary" href="/" role="button">Go back</a>
         </form>
     </div>

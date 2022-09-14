@@ -3,18 +3,22 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th style="visibility:collapse;">ID</th>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
             {{ range. }}
                 <tr>
-                    <td scope="row">{{.Id}}</td>
+                    <td style="visibility:collapse;">{{.Id}}</td>
                     <td>{{.Name}}</td>
                     <td>{{.Description}}</td>
-                    <td><a name="" id="" class="btn btn-danger" href="/delete?id={{.Id}}" role="button">Delete</a></td>
+                    <td>
+                        <a name="" id="" class="btn btn-warning" href="/edit?id={{.Id}}" role="button">Edit</a>
+                        <a name="" id="" class="btn btn-danger" href="/delete?ID={{.Id}}" role="button">Delete</a>
+                    </td>
                 </tr>
             {{end}}
             </tbody>
